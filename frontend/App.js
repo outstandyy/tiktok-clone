@@ -1,29 +1,47 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import { thunk } from 'redux-thunk';
+import { initializeApp, getApps } from 'firebase/app';
 
-import firebase from 'firebase/app';
-import Constants from 'expo-constants';
+import AuthScreen from './src/screens/auth';
+import rootReducer from './src/redux/reducers';
 
-console.log(Constants.manifest.web.config.firebase);
+console.log('app.js');
 
-if (firebase.getApps().length === 0) {
-	firebase.initializeApp(Constants.manifest.web.config.firebase);
+// Firebase configuration
+const firebaseConfig = {
+	apiKey: "AIzaSyDPiA0dMCmaGcOs2nvsxDFDu0SylquNUuw",
+	authDomain: "tiktok-f1ef5.firebaseapp.com",
+	projectId: "tiktok-f1ef5",
+	storageBucket: "tiktok-f1ef5.appspot.com",
+	messagingSenderId: "543958797360",
+	appId: "1:543958797360:web:b2ccd8bc622b10e20d71f5",
+	measurementId: "G-8VDLDC60NZ"
+};
+
+if (getApps().length === 0) {
+	initializeApp(firebaseConfig);
 }
 
+const store = createStore(rootReducer, applyMiddleware(thunk));
+
+console.log('apps: ', getApps());
+
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>!Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+	return (
+		<Provider store={store}>
+			<AuthScreen />
+		</Provider>
+	);
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+	container: {
+		flex: 1,
+		backgroundColor: '#fff',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
 });
